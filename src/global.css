@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+@font-face {
+  font-family: "Raleway";
+  src: url("./assets/Raleway.ttf") format("truetype");
+}
+
+:root {
+  font-size: 16px;
+}
