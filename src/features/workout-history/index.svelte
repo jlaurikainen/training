@@ -1,37 +1,29 @@
 <script lang="ts">
+  import Button from "@/components/button/index.svelte";
   import { db } from "@/db";
-  import type { Workout } from "@/types/workout";
   import { liveQuery } from "dexie";
 
-  function groupWorkoutsByDate(w: Workout[]) {
-    return Object.groupBy(w, (w) => w.date);
-  }
-
-  const workouts = liveQuery(() =>
-    db.workouts.toArray().then(groupWorkoutsByDate)
-  );
+  const workouts = liveQuery(() => db.workouts.toArray());
 </script>
 
-<div>
-  {#if $workouts}
-    {#each Object.entries($workouts) as [date, w]}
-      <h2>{new Date(date).toLocaleDateString("fi")}</h2>
+<h1 class="text-3xl mb-4">Workout History</h1>
 
-      {#if w}
-        {#each w as workout}
-          <div>
-            <h3>{workout.name}</h3>
+{#if workouts}
+  {#each $workouts as workout}
+    <h2 class="text-lg mb-4">
+      {new Date(workout.date).toLocaleDateString("fi")}
+    </h2>
 
-            <ul>
-              <li>Reps:{workout.reps}</li>
-              <li>Sets: {workout.sets}</li>
-              <li>Weight: {workout.weight}</li>
-            </ul>
-          </div>
+    {#each workout.exercises as exercise}
+      <div class="mb-4">
+        <h3 class="mb-2">{exercise.name}</h3>
+
+        {#each exercise.sets as set}
+          <p>Reps: {set.reps} @ {set.weight}kg</p>
         {/each}
-      {/if}
+      </div>
     {/each}
-  {/if}
-</div>
+  {/each}
+{/if}
 
-<style></style>
+<Button>New Workout</Button>
